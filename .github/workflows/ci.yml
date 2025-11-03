@@ -1,0 +1,47 @@
+name: Go CI
+
+# Triggers for the workflow.
+on:
+  push:
+    branches:
+      - main # Run on every push to the main branch.
+  pull_request:
+    branches:
+      - main # Run on every pull request to the main branch.
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner.
+
+    steps:
+      # 1. Check out code from the repository.
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Set up the Go environment.
+      #    Update 'go-version' if you use a different version.
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      # 3. Cache Go modules for faster builds.
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # 4. Run the linter (uses the same config as local development).
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.55
+          args: --verbose
+
+      # 5. Run tests. The -race flag detects race conditions.
+      - name: Run tests
+        run: go test -v -race ./...

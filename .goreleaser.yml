@@ -1,0 +1,47 @@
+# The name of your project.
+project_name: Tabloom
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: "tabloom"
+    # The path to your main.go file.
+    # This path is a common convention for Go projects.
+    main: ./cmd/tabloom/
+    # Embed version information into the binary.
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    # Build for popular OS and architectures.
+    goos:
+      - linux
+      - windows
+      - darwin # macOS
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+
+# Archive the binaries.
+archives:
+  - format: tar.gz
+    # Include additional files in the archive.
+    files:
+      - LICENSE
+      - README.md
+
+# Generate a checksums file.
+checksum:
+  name_template: 'checksums.txt'
+
+# Generate a changelog from git commits.
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - 'Merge pull request'
+      - 'Merge branch'

@@ -1,0 +1,29 @@
+run:
+  # Timeout for analysis, e.g. 1m, 5m. Default is 1m.
+  timeout: 5m
+
+linters:
+  # Enable specific linters instead of all of them.
+  # Run `golangci-lint help linters` to see all available linters.
+  enable:
+    - gofmt        # Enforces gofmt formatting.
+    - govet        # Analyzes code for suspicious constructs.
+    - errcheck     # Checks that all errors are handled.
+    - staticcheck  # A huge set of static analysis checks (very useful).
+    - unused       # Finds unused code.
+    - ineffassign  # Detects ineffectual assignments.
+    - typecheck    # Ensures the code type-checks.
+    - gosimple     # Suggests code simplifications.
+    - gosec        # Scans for security vulnerabilities.
+
+linters-settings:
+  # Linter-specific settings.
+  errcheck:
+    # Check for assignments to the blank identifier: `_ = f()`
+    check-blank: true
+
+issues:
+  # Maximum issues per linter. 0 = unlimited.
+  max-issues-per-linter: 0
+  # Maximum number of issues with the same text. 0 = unlimited.
+  max-same-issues: 0

@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    # Run this workflow only when a new tag like v* (e.g., v0.1.0) is pushed.
+    tags:
+      - 'v*'
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # GoReleaser needs the full commit history to generate a changelog.
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      # The main step: run GoReleaser.
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest # Use the latest GoReleaser version.
+          args: release --clean
+        env:
+          # A secret GitHub token that allows GoReleaser to create releases.
+          # It's provided automatically by GitHub Actions.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
