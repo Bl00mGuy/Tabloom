@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: tabloom-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://tabloom_user:tabloom_password@db:5432/tabloom?sslmode=disable
+      - JWT_SECRET=your-super-secret-jwt-key-for-tabloom
+      - SERVER_PORT=8080
+    depends_on:
+      - db
+    volumes:
+      - ./migrations:/app/migrations
+    networks:
+      - tabloom-network
+
+  db:
+    image: postgres:15
+    container_name: tabloom-db
+    environment:
+      - POSTGRES_USER=tabloom_user
+      - POSTGRES_PASSWORD=tabloom_password
+      - POSTGRES_DB=tabloom
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    networks:
+      - tabloom-network
+
+volumes:
+  postgres_data:
+
+networks:
+  tabloom-network:
+    driver: bridge
